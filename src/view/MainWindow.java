@@ -26,6 +26,7 @@ public class MainWindow extends JFrame implements Observer{
 	private JButton decryptButton;
 	private JButton crackButton;
 	private JButton generatePublicKeyButton;
+	private JButton clearButton;
 	
 	private JLabel primeALabel;
 	private JLabel primeBLabel;
@@ -123,11 +124,16 @@ public class MainWindow extends JFrame implements Observer{
 		this.generatePublicKeyButton.setActionCommand("publicKey");
 		this.generatePublicKeyButton.addActionListener(this.RSAC);
 		
+		this.clearButton = new JButton("Clear");
+		this.clearButton.setActionCommand("clear");
+		this.clearButton.addActionListener(this.RSAC);
+		
 		buttons.add(this.crackButton);
 		buttons.add(this.generatePublicKeyButton);
 		buttons.add(encryptButton);
 		buttons.add(decryptButton);
-
+		buttons.add(this.clearButton);
+		
 		this.layout.add(buttons);
 		
 		JPanel text = new JPanel(new GridLayout(4,1));

@@ -59,6 +59,8 @@ public class RSAController implements Controller,  ActionListener{
 		}else if(e.getActionCommand().equals("decrypt"))
 		{
 			
+			String text = this.window.encryptedTextTextField.getText();
+			
 			//set the values from the view into the model
 			int moduloN = Integer.parseInt(this.window.moduloNTextField.getText());
 			int privateKey = Integer.parseInt(this.window.privateKeyTextField.getText());
@@ -67,7 +69,7 @@ public class RSAController implements Controller,  ActionListener{
 			
 			this.rsa.setN(moduloN);
 			
-			this.rsa.decrypt(this.window.encryptedTextTextField.getText());
+			this.rsa.decrypt(text);
 		}else if(e.getActionCommand().equals("publicKey"))
 		{
 			//set the values from the view into the model
@@ -83,6 +85,10 @@ public class RSAController implements Controller,  ActionListener{
 			this.rsa.setN(primeA*primeB); //set the modulo
 			this.rsa.generateE(); //generate public key
 			this.rsa.calculateD(); //calculate private key
+			
+		}else if(e.getActionCommand().equals("clear"))
+		{
+			this.rsa.reset();
 			
 		}
 		

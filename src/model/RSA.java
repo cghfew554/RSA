@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,10 +70,13 @@ public class RSA extends Observable{
 		
 			for(int i = 2; i < this.getN(); i++)
 			{
-				if(GCD(i, this.getZ()) == 1){
+				System.out.println(" e : " + BigInteger.valueOf(i).mod(BigInteger.valueOf(this.getZ())).intValue());
+				if(BigInteger.valueOf(i).mod(BigInteger.valueOf(this.getZ())).intValue() == 1)
+				{
 					this.publicKey = i;
 					break;
 				}
+				
 			}
 		
 		this.notifyObserversSync();
@@ -80,22 +84,7 @@ public class RSA extends Observable{
 
 	}
 	
-	/**
-	 * Calculates the GCD of a and b
-	 * 
-	 * @param a
-	 * @param b
-	 * @return the GCD of a and b
-	 */
-	private int GCD(int a, int b)
-	{
-		
-		/*recursion basic step*/
-		if(b==0)
-			return a;
-		else/*recursive step*/
-			return GCD(b, a%b);
-	}
+	
 	
 	/**
 	 * D is the inverse of E in ring Zn
@@ -106,9 +95,16 @@ public class RSA extends Observable{
 	public void calculateD()
 	{
 		
+		//this.privateKey = BigInteger.valueOf(this.publicKey).modInverse(BigInteger.valueOf(this.getN())).intValue();
+		
+			
+		
 		for(int i = 0; i < this.getN() ; i++)
 		{
-			if((i*this.publicKey) % this.getN() == 1){
+			//System.out.println("di "+ BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).intValue());
+			//System.out.println("d : " + BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getN())).intValue());
+			
+			if(BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getN())).intValue() == 1){
 				System.out.println("private :" + i);
 				this.privateKey = i;
 				break;
@@ -207,6 +203,7 @@ public class RSA extends Observable{
 	
 	public void setN(int n)
 	{
+	
 		this.moduloN = n;
 		
 		this.notifyObserversSync();
@@ -297,10 +294,16 @@ public class RSA extends Observable{
 			for(int i = 0; i < message.length(); i++)
 			{
 				char oneLetter = message.charAt(i);
-			
-				int encryptedLetter = oneLetter^(this.getPublicKey()) % this.getN();
-							
-				this.encryptedText += Integer.toString(encryptedLetter) + " ";
+				
+				System.out.println("char normal: " + (int) oneLetter);
+				
+				BigInteger encryptedLetter = BigInteger.valueOf(oneLetter).modPow(BigInteger.valueOf(this.getPublicKey()), BigInteger.valueOf(this.getN())) ;
+				
+				
+				
+				System.out.println("et : " + (char)encryptedLetter.intValue());
+				
+				this.encryptedText += Integer.toString(encryptedLetter.intValue()) + " ";
 				
 			
 			}
@@ -318,7 +321,7 @@ public class RSA extends Observable{
 	public void decrypt(String message)
 	{
 		System.out.println("decrypting....");
-		if(this.getN() != 0 && this.getPrivateKey() != 0){
+		if(this.getN() != 0 && this.getPrivateKey() != 0 && !message.equals("")){
 			
 			System.out.println("d2..");
 			String[] messageParts = message.split(" ");
@@ -328,17 +331,38 @@ public class RSA extends Observable{
 		
 			for(int i = 0; i < messageParts.length; i++)
 			{
+				System.out.println("message part: " + messageParts[i]);
 				int oneLetterEncrypted = Integer.parseInt(messageParts[i]);
 			
-				int oneLetterDecrypted = oneLetterEncrypted^(this.getPrivateKey()) % this.getN();
+				System.out.println("blaat : " + (Math.pow(oneLetterEncrypted, this.getPrivateKey()) % this.getN()));
+				
+				BigInteger oneLetterDecrypted = BigInteger.valueOf(oneLetterEncrypted).modPow(BigInteger.valueOf(this.getPrivateKey()), BigInteger.valueOf(this.getN())) ;
+				
+				
+				System.out.println("message part decrypted : " + oneLetterDecrypted.intValue());
 			
-				this.plainText += Character.toString((char)oneLetterDecrypted);
+				this.plainText += Character.toString((char)oneLetterDecrypted.intValue());
 					
 			
-				System.out.println((char)oneLetterDecrypted);
+				System.out.println((char)oneLetterDecrypted.intValue());
 			}
 		
 			this.notifyObserversSync();
 		}
+	}
+	
+	public void reset()
+	{
+		this.primeA = 0;
+		this.primeB = 0;
+		
+		this.moduloN = 0;
+		this.encryptedText = "";
+		this.plainText = "";
+		
+		this.privateKey = 0;
+		this.publicKey = 0;
+		
+		this.notifyObserversSync();
 	}
 }

@@ -17,6 +17,11 @@ public class RSA extends Observable{
 	private int privateKey = 0;
 	private int publicKey = 0;
 	
+	private int moduloN = 0;
+	
+	private String plainText = "";
+	private String encryptedText = "";
+	
 	public RSA(){
 		
 		this.primes = new ArrayList<Integer>();
@@ -57,24 +62,27 @@ public class RSA extends Observable{
 	 * E is relative prime to Z, so gcd(e,z) = 1
 	 * 
 	 * @require this.getN() != 0;
-	 * 			this.getZ() != 0;
+	 * 			
 	 */
 	public void generateE()
 	{
-		for(int i = 2; i < this.getN(); i++)
-		{
-			System.out.println("for e :" + i + " gcd is :" + GCD(i, this.getZ()));
-			if(GCD(i, this.getZ()) == 1){
-				this.publicKey = i;
-				break;
+		
+			for(int i = 2; i < this.getN(); i++)
+			{
+				if(GCD(i, this.getZ()) == 1){
+					this.publicKey = i;
+					break;
+				}
 			}
-		}
+		
+		this.notifyObserversSync();
 		
 
 	}
 	
 	/**
 	 * Calculates the GCD of a and b
+	 * 
 	 * @param a
 	 * @param b
 	 * @return the GCD of a and b
@@ -100,14 +108,14 @@ public class RSA extends Observable{
 		
 		for(int i = 0; i < this.getN() ; i++)
 		{
-			System.out.println("for i :" + i + " rest : " + ((i*this.publicKey) % this.getN()));
 			if((i*this.publicKey) % this.getN() == 1){
+				System.out.println("private :" + i);
 				this.privateKey = i;
 				break;
 			}
 		}
 		
-		
+		this.notifyObserversSync();
 	}
 	
 	
@@ -139,7 +147,7 @@ public class RSA extends Observable{
 	/**
 	 * Set prime a
 	 * 
-	 * @require prime > 1 && prime = //TODO math definition of primes
+	 * @require prime <= 1000
 	 * @param prime a prime numbers 
 	 */
 	public void setPrimeA(int prime){
@@ -164,7 +172,7 @@ public class RSA extends Observable{
 	/**
 	 * Set prime b
 	 * 
-	 * @require prime > 1 && prime = //TODO math definition of primes
+	 * @require prime <= 1000
 	 * @param prime a prime numbers 
 	 */
 	public void setPrimeB(int prime){
@@ -194,7 +202,14 @@ public class RSA extends Observable{
 	 */
 	public int getN()
 	{
-		return this.getPrimeA()*this.getPrimeB();
+		return this.moduloN;
+	}
+	
+	public void setN(int n)
+	{
+		this.moduloN = n;
+		
+		this.notifyObserversSync();
 	}
 	
 	/**
@@ -209,15 +224,23 @@ public class RSA extends Observable{
 		return (this.getPrimeA() - 1)*(this.getPrimeB() - 1);
 	}
 	
+	/**
+	 * Get the public RSA key
+	 * 
+	 * @ensure result >= 0;
+	 * @return public RSA key
+	 */
 	public int getPublicKey(){
 		
-		if(this.publicKey == 0)
-			this.generateE();
 		
 		return this.publicKey;	
 	
 	}
 	
+	public void setPublicKey(int key)
+	{
+		this.publicKey = key;
+	}
 
 	/**
 	 * Calculates a private key where the publicKey * privateKey modulo this.getZ() = 1;
@@ -230,15 +253,18 @@ public class RSA extends Observable{
 	 */
 	public int getPrivateKey()
 	{
-		if(privateKey == 0)
-			this.calculateD();
-		
 		
 		return this.privateKey;
 	}
 	
+	public void setPrivateKey(int key)
+	{
+		this.privateKey = key;
+	}
 	
-	
+	/**
+	 * Notify all observers 
+	 */
 	public void notifyObserversSync()
 	{
 		
@@ -250,4 +276,69 @@ public class RSA extends Observable{
 		}
 	}
 	
+	public String getEncryptedMessage()
+	{
+		return this.encryptedText;
+	}
+	
+	
+	public String getPlainMessage()
+	{
+		return this.plainText;
+	}
+	
+	public void encrypt(String message)
+	{
+		System.out.println(message);
+		if(this.getPublicKey() != 0 && this.getN() != 0){
+			this.plainText = message;
+			this.encryptedText = "";
+		
+			for(int i = 0; i < message.length(); i++)
+			{
+				char oneLetter = message.charAt(i);
+			
+				int encryptedLetter = oneLetter^(this.getPublicKey()) % this.getN();
+							
+				this.encryptedText += Integer.toString(encryptedLetter) + " ";
+				
+			
+			}
+			
+			this.notifyObserversSync();
+		}
+		
+	}
+	
+	public void crack(int pk, int moduloN)
+	{
+		//TODO cracking...;)
+	}
+	
+	public void decrypt(String message)
+	{
+		System.out.println("decrypting....");
+		if(this.getN() != 0 && this.getPrivateKey() != 0){
+			
+			System.out.println("d2..");
+			String[] messageParts = message.split(" ");
+		
+		this.plainText = "";
+		this.encryptedText = message;
+		
+			for(int i = 0; i < messageParts.length; i++)
+			{
+				int oneLetterEncrypted = Integer.parseInt(messageParts[i]);
+			
+				int oneLetterDecrypted = oneLetterEncrypted^(this.getPrivateKey()) % this.getN();
+			
+				this.plainText += Character.toString((char)oneLetterDecrypted);
+					
+			
+				System.out.println((char)oneLetterDecrypted);
+			}
+		
+			this.notifyObserversSync();
+		}
+	}
 }

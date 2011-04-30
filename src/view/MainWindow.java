@@ -25,6 +25,7 @@ public class MainWindow extends JFrame implements Observer{
 	private JButton encryptButton;
 	private JButton decryptButton;
 	private JButton crackButton;
+	private JButton generatePublicKeyButton;
 	
 	private JLabel primeALabel;
 	private JLabel primeBLabel;
@@ -118,7 +119,12 @@ public class MainWindow extends JFrame implements Observer{
 		this.crackButton.setActionCommand("crack");
 		this.crackButton.addActionListener(this.RSAC);
 		
+		this.generatePublicKeyButton = new JButton("Public key");
+		this.generatePublicKeyButton.setActionCommand("publicKey");
+		this.generatePublicKeyButton.addActionListener(this.RSAC);
+		
 		buttons.add(this.crackButton);
+		buttons.add(this.generatePublicKeyButton);
 		buttons.add(encryptButton);
 		buttons.add(decryptButton);
 
@@ -168,6 +174,9 @@ public class MainWindow extends JFrame implements Observer{
 			
 			this.publicKeyTextField.setText(Integer.toString(((RSA) arg0).getPublicKey()));
 			this.privateKeyTextField.setText(Integer.toString(((RSA) arg0).getPrivateKey()));
+			
+			this.plainTextTextField.setText(((RSA) arg0).getPlainMessage());
+			this.encryptedTextTextField.setText(((RSA) arg0).getEncryptedMessage());
 			
 			
 		}

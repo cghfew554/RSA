@@ -1,7 +1,7 @@
 import controller.RSAController;
 
 
-public class RSA {
+public class RSAApplication {
 
 	/**
 	 * @param args

@@ -3,22 +3,23 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import model.RSAEncrypt;
+import model.RSA;
+
 import view.MainWindow;
 
 public class RSAController implements Controller,  ActionListener{
 
 	public MainWindow window = null;
-	public RSAEncrypt encryption = null;
+	public RSA rsa = null;
 	
 	public RSAController()
 	{
 		this.window = new MainWindow(this);
-		this.encryption = new RSAEncrypt();
+		this.rsa = new RSA();
 		
-		this.encryption.addObserver(this.window);
+		this.rsa.addObserver(this.window);
 		
-		this.window.update(this.encryption, "");
+		this.window.update(this.rsa, "");
 		
 		this.window.showMainWindow();
 	}
@@ -28,33 +29,61 @@ public class RSAController implements Controller,  ActionListener{
 		return this.window;
 	}
 	
-	public RSAEncrypt getEncryptionModel()
+	public RSA getRSAModel()
 	{
-		return this.encryption;
+		return this.rsa;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand().equals("crack")){
-			System.out.println("crack");
+			int publicKey = Integer.parseInt(this.window.publicKeyTextField.getText());
+			int moduloN = Integer.parseInt(this.window.moduloNTextField.getText());
+			
+			this.rsa.setN(moduloN); 
+			this.rsa.setPublicKey(publicKey);
+			
 		}else if(e.getActionCommand().equals("encrypt"))
 		{
+			String text = this.window.plainTextTextField.getText();
 			
+			int publicKey = Integer.parseInt(this.window.publicKeyTextField.getText());
+			int moduloN = Integer.parseInt(this.window.moduloNTextField.getText());
+						
+			this.rsa.setN(moduloN); 
+			this.rsa.setPublicKey(publicKey);
+			
+			this.rsa.encrypt(text);
+			
+		}else if(e.getActionCommand().equals("decrypt"))
+		{
+			
+			//set the values from the view into the model
+			int moduloN = Integer.parseInt(this.window.moduloNTextField.getText());
+			int privateKey = Integer.parseInt(this.window.privateKeyTextField.getText());
+			
+			this.rsa.setPrivateKey(privateKey);
+			
+			this.rsa.setN(moduloN);
+			
+			this.rsa.decrypt(this.window.encryptedTextTextField.getText());
+		}else if(e.getActionCommand().equals("publicKey"))
+		{
 			//set the values from the view into the model
 			int primeA = Integer.parseInt(this.window.primeATextField.getText());
 			int primeB = Integer.parseInt(this.window.primeBTextField.getText());
 			
 			if(primeA > 1)
-				this.encryption.setPrimeA(primeA);
+				this.rsa.setPrimeA(primeA);
 			
 			if(primeB > 1)
-				this.encryption.setPrimeB(primeB);
+				this.rsa.setPrimeB(primeB);
 			
+			this.rsa.setN(primeA*primeB); //set the modulo
+			this.rsa.generateE(); //generate public key
+			this.rsa.calculateD(); //calculate private key
 			
-		}else if(e.getActionCommand().equals("decrypt"))
-		{
-			System.out.println("decrypt");
 		}
 		
 	}

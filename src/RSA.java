@@ -1,11 +1,17 @@
+import controller.RSAController;
+
 
 public class RSA {
 
 	/**
-	 * @param args dfsaf
+	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		
+		
+		RSAController RSAC = new RSAController();
+		
+
 
 	}
 

@@ -10,6 +10,7 @@ public class RSA extends Observable{
 	private int primeA = 0;
 	private int primeB = 0;
 	
+	
 	Collection<Integer> primes;
 	HashMap<Integer, RSAKeys> keys;
 	
@@ -50,6 +51,66 @@ public class RSA extends Observable{
 		 
 	}
 	
+
+	
+	/**
+	 * E is relative prime to Z, so gcd(e,z) = 1
+	 * 
+	 * @require this.getN() != 0;
+	 * 			this.getZ() != 0;
+	 */
+	public void generateE()
+	{
+		for(int i = 2; i < this.getN(); i++)
+		{
+			System.out.println("for e :" + i + " gcd is :" + GCD(i, this.getZ()));
+			if(GCD(i, this.getZ()) == 1){
+				this.publicKey = i;
+				break;
+			}
+		}
+		
+
+	}
+	
+	/**
+	 * Calculates the GCD of a and b
+	 * @param a
+	 * @param b
+	 * @return the GCD of a and b
+	 */
+	private int GCD(int a, int b)
+	{
+		
+		/*recursion basic step*/
+		if(b==0)
+			return a;
+		else/*recursive step*/
+			return GCD(b, a%b);
+	}
+	
+	/**
+	 * D is the inverse of E in ring Zn
+	 * 
+	 * @require this.getN() != 0;
+	 * 			this.publicKey != 0;
+	 */
+	public void calculateD()
+	{
+		
+		for(int i = 0; i < this.getN() ; i++)
+		{
+			System.out.println("for i :" + i + " rest : " + ((i*this.publicKey) % this.getN()));
+			if((i*this.publicKey) % this.getN() == 1){
+				this.privateKey = i;
+				break;
+			}
+		}
+		
+		
+	}
+	
+	
 	/**
 	 * Checks if a number is a prime number
 	 * 
@@ -84,9 +145,8 @@ public class RSA extends Observable{
 	public void setPrimeA(int prime){
 		if(prime <= 1000 && this.isPrime(prime))
 			this.primeA = prime;
-		
+
 		this.notifyObserversSync();
-		
 	}
 	
 	
@@ -112,6 +172,7 @@ public class RSA extends Observable{
 			this.primeB = prime;
 		
 		this.notifyObserversSync();
+		
 	}
 	
 	/**
@@ -149,27 +210,15 @@ public class RSA extends Observable{
 	}
 	
 	public int getPublicKey(){
+		
 		if(this.publicKey == 0)
-			this.calculatePublicKey();
+			this.generateE();
 		
-		return this.publicKey;
-		
-	}
-	
-	/**
-	 * Calculates a public key that is relative prime to Z
-	 * 
-	 * @require this.getZ() != 0;
-	 * @ensure this.getPublicKey() != 0;
-	 * 
-	 */
-	public void calculatePublicKey()
-	{
-		//TODO research for relative prime libs in java
-		
+		return this.publicKey;	
 	
 	}
 	
+
 	/**
 	 * Calculates a private key where the publicKey * privateKey modulo this.getZ() = 1;
 	 * 
@@ -181,20 +230,14 @@ public class RSA extends Observable{
 	 */
 	public int getPrivateKey()
 	{
-		if(this.privateKey == 0)
-			this.calculatePrivateKey();
+		if(privateKey == 0)
+			this.calculateD();
+		
 		
 		return this.privateKey;
 	}
 	
-	/**
-	 * calculates a private key
-	 */
-	public void calculatePrivateKey()
-	{
-		
 	
-	}
 	
 	public void notifyObserversSync()
 	{

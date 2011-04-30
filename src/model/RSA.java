@@ -6,7 +6,7 @@ public class RSA extends Observable{
 	private int primeA = 0;
 	private int primeB = 0;
 	
-
+	
 	private int privateKey = 0;
 	private int publicKey = 0;
 	
@@ -22,6 +22,9 @@ public class RSA extends Observable{
 	 */
 	public void setPrimeA(int prime){
 		this.primeA = prime;
+		
+		this.notifyObserversSync();
+		
 	}
 	
 	/**
@@ -43,6 +46,8 @@ public class RSA extends Observable{
 	 */
 	public void setPrimeB(int prime){
 		this.primeB = prime;
+		
+		this.notifyObserversSync();
 	}
 	
 	/**
@@ -97,6 +102,8 @@ public class RSA extends Observable{
 	public void calculatePublicKey()
 	{
 		//TODO research for relative prime libs in java
+		
+	
 	}
 	
 	/**
@@ -122,6 +129,18 @@ public class RSA extends Observable{
 	public void calculatePrivateKey()
 	{
 		
+	
+	}
+	
+	public void notifyObserversSync()
+	{
+		
+		synchronized(this)
+		{
+			
+			this.setChanged();
+			this.notifyObservers(this);
+		}
 	}
 	
 }

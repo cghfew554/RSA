@@ -11,10 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.RSA;
+
 import controller.Controller;
 import controller.RSAController;
 
-public class MainWindow extends JFrame implements Observer {
+public class MainWindow extends JFrame implements Observer{
 
 
 	private static final long serialVersionUID = 1L;
@@ -31,18 +33,18 @@ public class MainWindow extends JFrame implements Observer {
 	private JLabel publicKeyLabel;
 	private JLabel privateKeyLabel;
 	
-	private JTextField primeATextField;
-	private JTextField primeBTextField;
-	private JTextField moduloNTextField;
-	private JTextField moduloZTextField;
-	private JTextField publicKeyTextField;
-	private JTextField privateKeyTextField;
+	public JTextField primeATextField;
+	public JTextField primeBTextField;
+	public JTextField moduloNTextField;
+	public JTextField moduloZTextField;
+	public JTextField publicKeyTextField;
+	public JTextField privateKeyTextField;
 	
 	private JLabel plainTextLabel;
 	private JLabel encryptedTextLabel;
 	
-	private JTextField plainTextTextField;
-	private JTextField encryptedTextTextField;
+	public JTextField plainTextTextField;
+	public JTextField encryptedTextTextField;
 	
 	private JPanel layout;
 	
@@ -105,8 +107,16 @@ public class MainWindow extends JFrame implements Observer {
 		JPanel buttons = new JPanel(new GridLayout(1,0));
 		
 		this.encryptButton = new JButton("Encrypt");
+		this.encryptButton.setActionCommand("encrypt");
+		this.encryptButton.addActionListener(this.RSAC);
+		
 		this.decryptButton = new JButton("Decrypt");
+		this.decryptButton.setActionCommand("decrypt");
+		this.decryptButton.addActionListener(this.RSAC);
+		
 		this.crackButton   = new JButton("Crack");
+		this.crackButton.setActionCommand("crack");
+		this.crackButton.addActionListener(this.RSAC);
 		
 		buttons.add(this.crackButton);
 		buttons.add(encryptButton);
@@ -146,8 +156,23 @@ public class MainWindow extends JFrame implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+	
+		if(arg0 instanceof RSA)
+		{
+			
+			this.primeATextField.setText(Integer.toString(((RSA) arg0).getPrimeA()));
+			this.primeBTextField.setText(Integer.toString(((RSA) arg0).getPrimeB()));
+			
+			this.moduloNTextField.setText(Integer.toString(((RSA) arg0).getN()));
+			this.moduloZTextField.setText(Integer.toString(((RSA) arg0).getZ()));
+			
+			this.publicKeyTextField.setText(Integer.toString(((RSA) arg0).getPublicKey()));
+			this.privateKeyTextField.setText(Integer.toString(((RSA) arg0).getPrivateKey()));
+			
+			
+		}
 		
 	}
+
 	
 }

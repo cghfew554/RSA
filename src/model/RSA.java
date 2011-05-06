@@ -70,10 +70,10 @@ public class RSA extends Observable{
 		
 			for(int i = 2; i < this.getN(); i++)
 			{
-				System.out.println(" e : " + BigInteger.valueOf(i).mod(BigInteger.valueOf(this.getZ())).intValue());
-				if(BigInteger.valueOf(i).mod(BigInteger.valueOf(this.getZ())).intValue() == 1)
+				System.out.println(" e : " + BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue());
+				if(BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue() == 1)
 				{
-					this.publicKey = i;
+					this.publicKey = 17;
 					break;
 				}
 				
@@ -104,7 +104,7 @@ public class RSA extends Observable{
 			//System.out.println("di "+ BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).intValue());
 			//System.out.println("d : " + BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getN())).intValue());
 			
-			if(BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getN())).intValue() == 1){
+			if(BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getZ())).intValue() == 1){
 				System.out.println("private :" + i);
 				this.privateKey = i;
 				break;

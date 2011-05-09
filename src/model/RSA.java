@@ -73,7 +73,7 @@ public class RSA extends Observable{
 				System.out.println(" e : " + BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue());
 				if(BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue() == 1)
 				{
-					this.publicKey = 17;
+					this.publicKey = i;
 					break;
 				}
 				

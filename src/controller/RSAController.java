@@ -40,9 +40,16 @@ public class RSAController implements Controller,  ActionListener{
 		if(e.getActionCommand().equals("crack")){
 			int publicKey = Integer.parseInt(this.window.publicKeyTextField.getText());
 			int moduloN = Integer.parseInt(this.window.moduloNTextField.getText());
+			String encryptedText = this.window.encryptedTextTextField.getText();
 			
-			this.rsa.setN(moduloN); 
-			this.rsa.setPublicKey(publicKey);
+			
+			this.rsa.reset();
+			
+			// this.rsa.setN(moduloN); 
+			// this.rsa.setPublicKey(publicKey);
+			this.rsa.crack(publicKey, moduloN);
+			
+			this.rsa.decrypt(encryptedText);
 			
 		}else if(e.getActionCommand().equals("encrypt"))
 		{

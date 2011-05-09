@@ -47,9 +47,7 @@ public class RSA extends Observable{
 			 while(b.hasNext())
 			 {
 				 int primeBb = b.next();
-				 System.out.println("PrimeBb : "+primeBb + " ");
 				 this.keys.put((primeAa*primeBb), new RSAKeys(primeAa, primeBb));
-				 System.out.println("Public key :" + (primeAa*primeBb) + " private key pair :"+ primeAa +" : "+primeBb);
 			 }
 		 }
 	
@@ -70,7 +68,6 @@ public class RSA extends Observable{
 		
 			for(int i = 2; i < this.getN(); i++)
 			{
-				System.out.println(" e : " + BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue());
 				if(BigInteger.valueOf(i).gcd(BigInteger.valueOf(this.getZ())).intValue() == 1)
 				{
 					this.publicKey = i;
@@ -101,8 +98,6 @@ public class RSA extends Observable{
 		
 		for(int i = 0; i < this.getN() ; i++)
 		{
-			//System.out.println("di "+ BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).intValue());
-			//System.out.println("d : " + BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getN())).intValue());
 			
 			if(BigInteger.valueOf(i).multiply(BigInteger.valueOf(this.publicKey)).mod(BigInteger.valueOf(this.getZ())).intValue() == 1){
 				System.out.println("private :" + i);
@@ -295,13 +290,7 @@ public class RSA extends Observable{
 			{
 				char oneLetter = message.charAt(i);
 				
-				System.out.println("char normal: " + (int) oneLetter);
-				
 				BigInteger encryptedLetter = BigInteger.valueOf(oneLetter).modPow(BigInteger.valueOf(this.getPublicKey()), BigInteger.valueOf(this.getN())) ;
-				
-				
-				
-				System.out.println("et : " + (char)encryptedLetter.intValue());
 				
 				this.encryptedText += Integer.toString(encryptedLetter.intValue()) + " ";
 				
@@ -313,17 +302,28 @@ public class RSA extends Observable{
 		
 	}
 	
+	// Get the prime numbers for this pk and moduleN
 	public void crack(int pk, int moduloN)
 	{
+		System.out.println(keys);
+		RSAKeys primes = keys.get(moduloN);
+		this.primeA = primes.primeA;
+		this.primeB = primes.primeB;
+		this.setPrimeA(primeA);
+		this.setPrimeB(primeB);
+		
+		this.setN(primeA * primeB);
+		this.generateE();
+		this.calculateD();
+		
+		
 		//TODO cracking...;)
 	}
 	
 	public void decrypt(String message)
 	{
-		System.out.println("decrypting....");
 		if(this.getN() != 0 && this.getPrivateKey() != 0 && !message.equals("")){
 			
-			System.out.println("d2..");
 			String[] messageParts = message.split(" ");
 		
 		this.plainText = "";
